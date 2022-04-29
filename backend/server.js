@@ -4,6 +4,7 @@ import connectDatabase from './config/MongoDb.js';
 import importData from './DataImport.js';
 import productRoute from './routes/ProductRoutes.js';
 import { errorHandler, notFound } from './middleware/Error.js';
+import userRouter from './routes/userRoutes.js';
 
 dotenv.config();
 connectDatabase();
@@ -21,10 +22,15 @@ const app = express();
 //   res.json(product);
 // });
 
+//positioning matters here !!
 //api data (users and products) from backend through post request and add to db
 app.use('/api/import', importData);
 //api to get list of products GET request
 app.use('/api/products', productRoute);
+//login api
+app.use(express.json());
+app.use('/api/users', userRouter);
+
 //middleware error handling
 app.use(notFound);
 app.use(errorHandler);
