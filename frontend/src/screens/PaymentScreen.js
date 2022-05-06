@@ -1,12 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Header from "./../components/Header";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { savePaymentMethod } from '../redux/actions/CartActions';
+import Header from './../components/Header';
 
-const PaymentScreen = () => {
+const PaymentScreen = ({ history }) => {
   window.scrollTo(0, 0);
+
+  const cart = useSelector((state) => state.cart);
+  const { shippingAddress } = cart;
+
+  //check if shipping address exists
+  if (!shippingAddress) {
+    history.push('/shipping');
+  }
+
+  const [paymentMethod, setPaymentMethod] = React.useState('Paypal');
+  // const [country, setCountry] = React.useState('');
+
+  const dispatch = useDispatch();
 
   const submitHandler = (e) => {
     e.preventDefault();
+    dispatch(savePaymentMethod(paymentMethod));
+    history.push('/placeorder');
   };
   return (
     <>
@@ -19,16 +35,17 @@ const PaymentScreen = () => {
           <h6>SELECT PAYMENT METHOD</h6>
           <div className="payment-container">
             <div className="radio-container">
-              <input className="form-check-input" type="radio" value="PayPal" />
+              <input
+                className="form-check-input"
+                type="radio"
+                value="PayPal"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
               <label className="form-check-label">PayPal or Credit Card</label>
             </div>
           </div>
 
-          <button type="submit">
-            <Link to="/placeorder" className="text-white">
-              Continue
-            </Link>
-          </button>
+          <button type="submit">Continue</button>
         </form>
       </div>
     </>
