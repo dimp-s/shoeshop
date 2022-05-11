@@ -40,6 +40,16 @@ orderRouter.post(
   })
 );
 
+//user login orders
+orderRouter.get(
+  '/',
+  protect,
+  asyncHandler(async (req, res) => {
+    const order = await Order.find({ user: req.user._id }).sort({ _id: -1 });
+    res.json(order);
+  })
+);
+
 //get order by id
 orderRouter.get(
   '/:id',
@@ -53,6 +63,30 @@ orderRouter.get(
       res.json(order);
     } else {
       res.status(404).json(createOrder);
+      throw new Error('Order not found!');
+    }
+  })
+);
+
+//order payment backend api
+orderRouter.put(
+  '/:id/pay',
+  protect,
+  asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      order.isPaid = true;
+      order.paidAt = Date.now;
+      order.paymentResult = {
+        id: req.body.id,
+        status: req.body.status,
+        update_time: req.params.update_time,
+        email_address: req.params.email_address,
+      };
+      const updatedOrder = await order.save();
+      res.json(updatedOrder);
+    } else {
+      res.status(404);
       throw new Error('Order not found!');
     }
   })
