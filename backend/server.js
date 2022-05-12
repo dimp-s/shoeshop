@@ -27,6 +27,7 @@ const app = express();
 //api data (users and products) from backend through post request and add to db
 app.use('/api/import', importData);
 //api to get list of products GET request
+app.use(express.json());
 app.use('/api/products', productRoute);
 //login api
 app.use(express.json());
