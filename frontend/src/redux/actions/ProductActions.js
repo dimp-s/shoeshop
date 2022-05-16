@@ -13,11 +13,13 @@ import axios from 'axios';
 import { logout } from './UserActions';
 //get list of products from backend and set reducer state values using dispatch
 export const listProduct =
-  (keyword = ' ') =>
+  (keyword = ' ', pageNumber = ' ') =>
   async (dispatch) => {
     try {
       dispatch({ type: PRODUCT_LIST_REQUEST });
-      const { data } = await axios.get(`/api/products?keyword=${keyword}`);
+      const { data } = await axios.get(
+        `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+      );
       dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
     } catch (error) {
       dispatch({
